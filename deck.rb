@@ -3,10 +3,10 @@ require 'pry'
 
 class Deck < Array
   attr_accessor :faces, :suits, :cards
-  
+
   def initialize
-    @suits = ['♠', '♥', '♦', '♣']
-    @faces = [*(2..10), 'J', 'Q', 'K', 'A'].map(&:to_s)
+    @suits = %w( ♠ ♥ ♦ ♣ )
+    @faces = [ *('2'..'10'), *%w(J Q K A) ]
     @suits.each do |suit|
       value = 0
       @faces.each do |face|
@@ -15,7 +15,7 @@ class Deck < Array
       end
     end
   end
-
+  
   def draw!
     drawncard = self.shift
     drawncard

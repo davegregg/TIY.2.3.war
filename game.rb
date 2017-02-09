@@ -19,8 +19,7 @@ class Game
                @prompt.yes?("\n  Would you like to start a new game of WAR?") {|q| q.default true}
              rescue
                retry
-             end
-    exit unless @start == true
+             end || exit
 
     set
     play
@@ -29,12 +28,16 @@ class Game
 
   def set
 
-    @player1 = Player.new('Piotr')
-    @player2 = Player.new('Yuri')
-    @player1.wins = 0
-    @player2.wins = 0
+    Player.new('Piotr')
+    Player.new('Yuri')
+    Player.first.wins = 0
+    Player.second.wins = 0
+    Player.first.deck = Deck.new
+    Player.second.deck = Deck.new
+    Players.shuffle
+
+    @sets = []
     @winning = ''
-    Players.shuffle(@player1,@player2)
 
   end
 
@@ -42,15 +45,15 @@ class Game
 
     52.times do |round|
 
-      @hand = Players.draw(@player1,@player2)
+      @hand = Players.draw
 
       case resolve ( @hand )
 
-        when @player1 # wins the hand
-          @player1.wins += 1
+        when Player.first # wins the hand
+          Player.first.wins += 1
 
-        when @player2 # wins the hand
-          @player2.wins += 1
+        when Player.second # wins the hand
+          Player.second.wins += 1
 
       end
 
@@ -62,14 +65,21 @@ class Game
 
   def resolve(hand)
 
-    hand.first > hand.last ? @player1 : @player2
+      hand[0] > hand[1] ? Player.first : Player.second
+      # @sets << { Player1: [ hand[0].face, hand[0].suit ], Player1: [ hand[1].face, hand[1].suit ] }
 
   end
 
   def tally
 
-    @winning = @player1.wins > @player2.wins ? @player1 : @player2
+    @winning = Player.first.wins > Player.second.wins ? Player.first : Player.second
+
+    # set_detail = @sets.each do |set|
+    #   "#{set}"
+    # end
+
     print "\n  #{@winning.name} won overall with #{@winning.wins} out of 52.\n"
+
     new_game?
 
   end

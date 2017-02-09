@@ -3,22 +3,36 @@ require 'pry'
 
 class Player
   attr_accessor :name, :deck, :wins
+  @@players = []
 
   def initialize(name, wins=0)
     @name = name
     @wins = wins
-    @deck = Deck.new
+    @deck = []
+    @@players << self
   end
 
   class << self
 
-    def shuffle(player1,player2)
-      player1.deck.shuffle!
-      player2.deck.shuffle!
+    def all
+      @@players
     end
 
-    def draw(player1,player2)
-      [ player1.deck.draw!, player2.deck.draw! ]
+    def first
+      @@players[0]
+    end
+
+    def second
+      @@players[1]
+    end
+
+    def shuffle
+      self.first.deck.shuffle!
+      self.second.deck.shuffle!
+    end
+
+    def draw
+      [ self.first.deck.draw!, self.second.deck.draw! ]
     end
 
   end
